@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'dart:io';
-import 'dart:ui';
+import 'dart:ffi';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,21 +11,34 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+  TextEditingController delayController = TextEditingController();
   DateTime? startTime;
   Duration? timeSinceStart;
+  int? deltaCount;
+  int delaySecond = 60;
 
   @override
   void initState() {
     super.initState();
 
+    delayController.text = delaySecond.toString();
+
     // defines a timer
     Timer.periodic(const Duration(milliseconds: 250), (Timer t) {
       setState(() {
-        if (startTime != null) {
+        if (startTime != null && deltaCount != null) {
           timeSinceStart = Duration(
             milliseconds: DateTime.now().millisecondsSinceEpoch.toInt() -
                 startTime!.millisecondsSinceEpoch.toInt(),
           );
+
+          if (deltaCount! < timeSinceStart!.inSeconds ~/ delaySecond) {
+            // vibrate
+
+            print("Vibrating $deltaCount");
+
+            deltaCount = deltaCount! + 1;
+          }
         }
       });
     });
@@ -57,6 +67,12 @@ class HomePageState extends State<HomePage> {
                     width: 60,
                     height: 50,
                     child: TextField(
+                      controller: delayController,
+                      onChanged: (value) {
+                        if (int.tryParse(value) != null) {
+                          delaySecond = int.parse(value);
+                        }
+                      },
                       decoration: InputDecoration(
                         fillColor: Colors.grey[900],
                         filled: true,
@@ -74,6 +90,7 @@ class HomePageState extends State<HomePage> {
                 if (startTime == null) {
                   setState(() {
                     startTime = DateTime.now();
+                    deltaCount = 0;
                   });
                 } else {
                   setState(() {
