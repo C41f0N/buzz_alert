@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="buzz_alert"
+        android:label="Buzz Alert"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
