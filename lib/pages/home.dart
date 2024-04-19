@@ -98,6 +98,7 @@ class HomePageState extends State<HomePage> {
                 if (int.tryParse(delayController.text) != null) {
                   if (startTime == null) {
                     setState(() {
+                      setDuration();
                       startTime = DateTime.now();
                       deltaCount = 0;
                     });
