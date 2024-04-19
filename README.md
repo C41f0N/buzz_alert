@@ -1,16 +1,9 @@
-# buzz_alert
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<p align="center">
+<img src="https://github.com/thenoisyninga/buzz_alert/assets/88588593/0ec90f2b-920a-437d-b505-2452ee3eaa20" title="Icon"  alt="Icon" width="200" height="200"/>&nbsp;
+</p>
+<h1 align="center">
+buzz_alert
+</h1>
+<p align="center">
+An app that helps keep track of time while giving a solo presentation. It vibrates your phone after a custom time duration set by the user.
+</p>
