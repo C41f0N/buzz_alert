@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:vibration/vibration.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,7 +16,23 @@ class HomePageState extends State<HomePage> {
   DateTime? startTime;
   Duration? timeSinceStart;
   int? deltaCount;
-  int delaySecond = 60;
+  int delaySecond = 2;
+
+  Future<void> vibrate() async {
+    // vibrate
+    print("Vibrating $deltaCount");
+    if (await Vibration.hasVibrator() ?? true) {
+      Vibration.vibrate();
+    }
+  }
+
+  void setDuration() {
+    if (int.tryParse(delayController.text) != null) {
+      setState(() {
+        delaySecond = int.parse(delayController.text);
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -24,7 +41,7 @@ class HomePageState extends State<HomePage> {
     delayController.text = delaySecond.toString();
 
     // defines a timer
-    Timer.periodic(const Duration(milliseconds: 250), (Timer t) {
+    Timer.periodic(const Duration(milliseconds: 250), (Timer t) async {
       setState(() {
         if (startTime != null && deltaCount != null) {
           timeSinceStart = Duration(
@@ -34,9 +51,7 @@ class HomePageState extends State<HomePage> {
 
           if (deltaCount! < timeSinceStart!.inSeconds ~/ delaySecond) {
             // vibrate
-
-            print("Vibrating $deltaCount");
-
+            vibrate();
             deltaCount = deltaCount! + 1;
           }
         }
@@ -67,17 +82,10 @@ class HomePageState extends State<HomePage> {
                     width: 60,
                     height: 50,
                     child: TextField(
+                      enabled: startTime == null,
                       controller: delayController,
-                      onChanged: (value) {
-                        if (int.tryParse(value) != null) {
-                          delaySecond = int.parse(value);
-                        }
-                      },
-                      decoration: InputDecoration(
-                        fillColor: Colors.grey[900],
-                        filled: true,
-                      ),
                       keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   const SizedBox(width: 5),
@@ -87,15 +95,23 @@ class HomePageState extends State<HomePage> {
             ),
             GestureDetector(
               onTap: () {
-                if (startTime == null) {
-                  setState(() {
-                    startTime = DateTime.now();
-                    deltaCount = 0;
-                  });
+                if (int.tryParse(delayController.text) != null) {
+                  if (startTime == null) {
+                    setState(() {
+                      startTime = DateTime.now();
+                      deltaCount = 0;
+                    });
+                  } else {
+                    setState(() {
+                      startTime = null;
+                    });
+                  }
                 } else {
-                  setState(() {
-                    startTime = null;
-                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Invalid value entered."),
+                    ),
+                  );
                 }
               },
               child: Container(
@@ -122,7 +138,10 @@ class HomePageState extends State<HomePage> {
                     startTime == null
                         ? const SizedBox()
                         : Text(timeSinceStart.toString().substring(
-                            0, timeSinceStart.toString().length - 7)),
+                            0,
+                            timeSinceStart.toString().length - 7 > 0
+                                ? timeSinceStart.toString().length - 7
+                                : 0)),
                   ],
                 ),
               ),
